@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDateString,
@@ -70,7 +70,7 @@ export class Customers {
   district: string;
 
   @ApiProperty({ description: 'Número da casa da pessoa' })
-  @Column({ name: 'house-number' })
+  @Column({ name: 'house_number' })
   @IsNumber()
   houseNumber: number;
 
@@ -99,7 +99,7 @@ export class Customers {
   @Max(5)
   column: number;
 
-  @ApiProperty({ description: 'Email da pessoa' })
+  @ApiPropertyOptional({ description: 'Email da pessoa' })
   @Column({ nullable: true })
   @IsOptional()
   @IsEmail()

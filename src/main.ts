@@ -34,5 +34,6 @@ async function bootstrap() {
   const url = await app.getUrl();
 
   console.log(`Application started in ${url}`);
+  console.log(`Swagger started in ${url}/api`);
 }
 bootstrap();
