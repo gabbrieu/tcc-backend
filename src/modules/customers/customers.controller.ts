@@ -32,6 +32,11 @@ export class CustomersController {
     return await this.service.getAll(filters);
   }
 
+  @Get('by-column')
+  async getAllOrganizedByColumn() {
+    return await this.service.getAllOrganizedByColumn();
+  }
+
   @Post()
   async create(@Body() req: CreateCustomerDto) {
     return await this.service.create(req);

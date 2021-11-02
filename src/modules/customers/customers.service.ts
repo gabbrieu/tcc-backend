@@ -9,6 +9,14 @@ import { Customers } from './customers.entity';
 import { CreateCustomerDto } from './dto/request/createCustomer.dto';
 import { GetAllRequestDto } from './dto/request/getAllRequest.dto';
 
+export interface OrganizedCustomers {
+  cliente_em_potencial: Customers[];
+  contato_realizado: Customers[];
+  visita_agendada: Customers[];
+  negocio_em_andamento: Customers[];
+  finalizados: Customers[];
+}
+
 @Injectable()
 export class CustomersService {
   constructor(
@@ -99,6 +107,72 @@ export class CustomersService {
       data,
       count,
     };
+  }
+
+  async getAllOrganizedByColumn() {
+    let organizedCustomers = [
+      [
+        {
+          name: 'cliente_em_potencial',
+          customers: [],
+        },
+      ],
+      [
+        {
+          name: 'contato_realizado',
+          customers: [],
+        },
+      ],
+      [
+        {
+          name: 'visita_agendada',
+          customers: [],
+        },
+      ],
+      [
+        {
+          name: 'negocio_em_andamento',
+          customers: [],
+        },
+      ],
+      [
+        {
+          name: 'finalizados',
+          customers: [],
+        },
+      ],
+    ];
+    console.log(organizedCustomers[1]);
+    const customers = await this.repository.find();
+
+    customers.forEach((c) => {
+      switch (c.column) {
+        case 1:
+          organizedCustomers[0][0].customers.push(c);
+          break;
+
+        case 2:
+          organizedCustomers[0][1].customers.push(c);
+          break;
+
+        case 3:
+          organizedCustomers[0][2].customers.push(c);
+          break;
+
+        case 4:
+          organizedCustomers[0][3].customers.push(c);
+          break;
+
+        case 5:
+          organizedCustomers[0][4].customers.push(c);
+          break;
+
+        default:
+          break;
+      }
+    });
+
+    return organizedCustomers;
   }
 
   async delete(id: string): Promise<void> {
