@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { Customers } from './customers.entity';
 import { CreateCustomerDto } from './dto/request/createCustomer.dto';
 import { GetAllRequestDto } from './dto/request/getAllRequest.dto';
+import { UpdateAllCustomersDto } from './dto/request/updateAllCustomers.dto';
+import { UpdateCustomerColumnDto } from './dto/request/updateCustomerColumn.dto';
 
 export interface OrganizedCustomers {
   cliente_em_potencial: Customers[];
@@ -108,71 +110,30 @@ export class CustomersService {
       count,
     };
   }
+  async updateCustomerColumn(
+    id: string,
+    req: UpdateCustomerColumnDto,
+  ): Promise<Customers> {
+    const customer = await this.getOne(id);
+    customer.column = req.column;
 
-  async getAllOrganizedByColumn() {
-    let organizedCustomers = [
-      [
-        {
-          name: 'cliente_em_potencial',
-          customers: [],
-        },
-      ],
-      [
-        {
-          name: 'contato_realizado',
-          customers: [],
-        },
-      ],
-      [
-        {
-          name: 'visita_agendada',
-          customers: [],
-        },
-      ],
-      [
-        {
-          name: 'negocio_em_andamento',
-          customers: [],
-        },
-      ],
-      [
-        {
-          name: 'finalizados',
-          customers: [],
-        },
-      ],
-    ];
-    console.log(organizedCustomers[1]);
-    const customers = await this.repository.find();
+    return await this.repository.save(customer);
+  }
 
-    customers.forEach((c) => {
-      switch (c.column) {
-        case 1:
-          organizedCustomers[0][0].customers.push(c);
-          break;
+  async updateAllCustomers(req: UpdateAllCustomersDto) {
+    const customers = await this.repository.find({ where: { status: true } });
 
-        case 2:
-          organizedCustomers[0][1].customers.push(c);
-          break;
+    for (const customer of customers) {
+      const id = customer.id;
 
-        case 3:
-          organizedCustomers[0][2].customers.push(c);
-          break;
-
-        case 4:
-          organizedCustomers[0][3].customers.push(c);
-          break;
-
-        case 5:
-          organizedCustomers[0][4].customers.push(c);
-          break;
-
-        default:
-          break;
+      for (const c of req.customers) {
+        if (c.id === id) {
+          console.log(c);
+          customer.order = c.order;
+          await this.repository.save(customer);
+        }
       }
-    });
-
-    return organizedCustomers;
+    }
   }
 
   async delete(id: string): Promise<void> {
