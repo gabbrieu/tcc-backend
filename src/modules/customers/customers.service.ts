@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -29,6 +30,7 @@ export class CustomersService {
   async getOne(id: string): Promise<Customers> {
     const customer = await this.repository.findOne(id);
     if (!customer) throw new NotFoundException('Cliente não existe!');
+    if (!customer.status) throw new BadRequestException('Cliente desativado!');
 
     return customer;
   }
@@ -67,7 +69,7 @@ export class CustomersService {
   async getAll(
     filters: GetAllRequestDto,
   ): Promise<{ data: Customers[]; count: number }> {
-    const query = this.repository
+    let query = this.repository
       .createQueryBuilder('customer')
       .select('customer.id', 'id')
       .addSelect('customer.name', 'name')
@@ -100,6 +102,8 @@ export class CustomersService {
     if (filters.column)
       query.andWhere(`customer.column = :column`, { column: filters.column });
 
+    query = query.orderBy('customer.order', 'ASC');
+
     const [data, count] = await Promise.all([
       query.clone().getRawMany(),
       query.clone().getCount(),
@@ -125,12 +129,13 @@ export class CustomersService {
 
     for (const customer of customers) {
       const id = customer.id;
-
       for (const c of req.customers) {
         if (c.id === id) {
-          console.log(c);
-          customer.order = c.order;
-          await this.repository.save(customer);
+          if (c.column !== customer.column || c.order !== customer.order) {
+            customer.order = c.order;
+            customer.column = c.column;
+            await this.repository.save(customer);
+          }
         }
       }
     }
