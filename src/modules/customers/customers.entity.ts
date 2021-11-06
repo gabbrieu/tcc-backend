@@ -6,8 +6,8 @@ import {
   IsEnum,
   IsNumber,
   IsOptional,
-  IsPhoneNumber,
   IsString,
+  Length,
   Max,
   Min,
 } from 'class-validator';
@@ -37,7 +37,7 @@ export class Customers {
 
   @ApiProperty({ description: 'Celular de uma pessoa' })
   @Column()
-  @IsPhoneNumber('BR')
+  @Length(11)
   cellphone: string;
 
   @ApiProperty({ description: 'Gênero de uma pessoa', enum: GenderEnum })
