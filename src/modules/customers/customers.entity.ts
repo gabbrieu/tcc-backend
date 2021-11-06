@@ -71,8 +71,8 @@ export class Customers {
 
   @ApiProperty({ description: 'Número da casa da pessoa' })
   @Column({ name: 'house_number' })
-  @IsNumber()
-  houseNumber: number;
+  @IsString()
+  houseNumber: string;
 
   @ApiProperty({
     description:
