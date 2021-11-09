@@ -81,6 +81,7 @@ export class CustomersService {
       .addSelect('customer.column', 'column')
       .addSelect('customer.order', 'order')
       .addSelect('customer.description', 'description')
+      .addSelect('customer.priority', 'priority')
       .addSelect('customer.city', 'city')
       .addSelect('customer.house_number', 'houseNumber')
       .addSelect('customer.district', 'district')
