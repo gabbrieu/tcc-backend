@@ -25,6 +25,14 @@ export enum GenderEnum {
   NÃO_INFORMADO = 'NÃO INFORMADO',
 }
 
+export enum PriorityEnum {
+  VERY_LOW = 'VERY_LOW',
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
+}
+
 @Entity()
 export class Customers {
   @PrimaryGeneratedColumn('uuid')
@@ -125,4 +133,17 @@ export class Customers {
     default: () => 'LOCALTIMESTAMP',
   })
   updatedAt: string;
+
+  @ApiProperty({
+    description: 'Nível de prioridade',
+    enum: PriorityEnum,
+    enumName: 'PriorityEnum',
+  })
+  @Column({
+    type: 'enum',
+    enum: PriorityEnum,
+    enumName: 'PriorityEnum',
+  })
+  @IsEnum(PriorityEnum)
+  priority: PriorityEnum;
 }
