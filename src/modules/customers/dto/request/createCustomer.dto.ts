@@ -15,5 +15,5 @@ export class CreateCustomerDto extends PickType(Customers, [
   'cellphone',
   'city',
   'column',
-  'street',
+  'priority',
 ]) {}
