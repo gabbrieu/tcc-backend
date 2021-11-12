@@ -17,7 +17,7 @@ import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/request/createCustomer.dto';
 import { GetAllRequestDto } from './dto/request/getAllRequest.dto';
 import { UpdateAllCustomersDto } from './dto/request/updateAllCustomers.dto';
-import { UpdateCustomerColumnDto } from './dto/request/updateCustomerColumn.dto';
+import { UpdateCustomerDto } from './dto/request/updateCustomer.dto';
 
 @Controller('customers')
 @ApiTags('Customers')
@@ -42,11 +42,11 @@ export class CustomersController {
   }
 
   @Patch(':id')
-  async updateCustomersColumn(
+  async update(
     @Param('id') id: string,
-    @Body() req: UpdateCustomerColumnDto,
+    @Body() req: UpdateCustomerDto,
   ): Promise<Customers> {
-    return await this.service.updateCustomerColumn(id, req);
+    return await this.service.update(id, req);
   }
 
   @Put('update-all')
