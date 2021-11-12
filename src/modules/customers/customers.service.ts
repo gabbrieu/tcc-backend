@@ -10,7 +10,7 @@ import { Customers } from './customers.entity';
 import { CreateCustomerDto } from './dto/request/createCustomer.dto';
 import { GetAllRequestDto } from './dto/request/getAllRequest.dto';
 import { UpdateAllCustomersDto } from './dto/request/updateAllCustomers.dto';
-import { UpdateCustomerColumnDto } from './dto/request/updateCustomerColumn.dto';
+import { UpdateCustomerDto } from './dto/request/updateCustomer.dto';
 
 export interface OrganizedCustomers {
   cliente_em_potencial: Customers[];
@@ -76,7 +76,7 @@ export class CustomersService {
       .addSelect('customer.email', 'email')
       .addSelect('customer.birth_date', 'birthDate')
       .addSelect('customer.document', 'document')
-      .addSelect('customer.cellphone', 'cellPhone')
+      .addSelect('customer.cellphone', 'cellphone')
       .addSelect('customer.gender', 'gender')
       .addSelect('customer.column', 'column')
       .addSelect('customer.order', 'order')
@@ -115,14 +115,12 @@ export class CustomersService {
       count,
     };
   }
-  async updateCustomerColumn(
-    id: string,
-    req: UpdateCustomerColumnDto,
-  ): Promise<Customers> {
-    const customer = await this.getOne(id);
-    customer.column = req.column;
 
-    return await this.repository.save(customer);
+  async update(id: string, req: UpdateCustomerDto): Promise<Customers> {
+    await this.getOne(id);
+    await this.repository.update(id, req);
+
+    return await this.getOne(id);
   }
 
   async updateAllCustomers(req: UpdateAllCustomersDto) {
