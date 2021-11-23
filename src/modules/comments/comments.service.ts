@@ -32,6 +32,12 @@ export class CommentsService {
       .take(filters.take)
       .skip(filters.skip);
 
+    if (filters.customerId) {
+      query.andWhere('"customerId" = :customerId', {
+        customerId: filters.customerId,
+      });
+    }
+
     query = query.orderBy('comments.create_date', 'ASC');
 
     const [data, count] = await Promise.all([
