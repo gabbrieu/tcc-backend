@@ -16,6 +16,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/request/createComment.dto';
 import { GetAllCommentsRequestDto } from './dto/request/getAllComments.dto';
 import { UpdateCommentDto } from './dto/request/updateComment.dto';
+import { CreateCommentResponseDto } from './dto/response/createCommentResponse.dto';
 
 @ApiTags('Comments')
 @Controller('comments')
@@ -35,7 +36,9 @@ export class CommentsController {
   }
 
   @Post()
-  async create(@Body() req: CreateCommentDto): Promise<Comments> {
+  async create(
+    @Body() req: CreateCommentDto,
+  ): Promise<CreateCommentResponseDto> {
     return await this.service.create(req);
   }
 

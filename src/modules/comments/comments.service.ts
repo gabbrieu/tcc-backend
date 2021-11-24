@@ -6,6 +6,7 @@ import { Comments } from './comments.entity';
 import { CreateCommentDto } from './dto/request/createComment.dto';
 import { GetAllCommentsRequestDto } from './dto/request/getAllComments.dto';
 import { UpdateCommentDto } from './dto/request/updateComment.dto';
+import { CreateCommentResponseDto } from './dto/response/createCommentResponse.dto';
 
 @Injectable()
 export class CommentsService {
@@ -60,7 +61,7 @@ export class CommentsService {
     return comment;
   }
 
-  async create(req: CreateCommentDto): Promise<Comments> {
+  async create(req: CreateCommentDto): Promise<CreateCommentResponseDto> {
     const customer = await this.customersService.getOne(req.customerId);
     const comment = this.repository.create({
       comment: req.comment,
@@ -71,9 +72,11 @@ export class CommentsService {
     return {
       id: savedComment.id,
       comment: savedComment.comment,
+      customerId: savedComment.customer.id,
+      customerName: savedComment.customer.name,
       createdAt: savedComment.createdAt,
       updatedAt: savedComment.updatedAt,
-    } as Comments;
+    } as CreateCommentResponseDto;
   }
 
   async update(id: string, req: UpdateCommentDto): Promise<Comments> {
