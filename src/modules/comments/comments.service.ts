@@ -81,7 +81,6 @@ export class CommentsService {
 
   async update(id: string, req: UpdateCommentDto): Promise<Comments> {
     const updatedComment = await this.getOne(id);
-    console.log(id, updatedComment);
     updatedComment.comment = req.comment;
 
     return await this.repository.save(updatedComment);
