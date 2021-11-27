@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
   Max,
   Min,
@@ -15,9 +16,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comments } from '../comments/comments.entity';
 
 export enum GenderEnum {
   MASCULINO = 'MASCULINO',
@@ -146,4 +149,13 @@ export class Customers {
   })
   @IsEnum(PriorityEnum)
   priority: PriorityEnum;
+
+  @ApiProperty({
+    description: 'Comentários',
+    type: () => Comments,
+    isArray: true,
+  })
+  @IsUUID(undefined, { each: true })
+  @OneToMany(() => Comments, (comment) => comment.customer)
+  comments: Comments[];
 }

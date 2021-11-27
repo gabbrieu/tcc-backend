@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { Customers } from './customers.entity';
 import { CreateCustomerDto } from './dto/request/createCustomer.dto';
 import { GetAllRequestDto } from './dto/request/getAllRequest.dto';
@@ -28,7 +28,9 @@ export class CustomersService {
   ) {}
 
   async getOne(id: string): Promise<Customers> {
-    const customer = await this.repository.findOne(id);
+    const customer = await this.repository.findOne(id, {
+      relations: ['comments'],
+    });
     if (!customer) throw new NotFoundException('Cliente não existe!');
     if (!customer.status) throw new BadRequestException('Cliente desativado!');
 
@@ -69,46 +71,30 @@ export class CustomersService {
   async getAll(
     filters: GetAllRequestDto,
   ): Promise<{ data: Customers[]; count: number }> {
-    let query = this.repository
-      .createQueryBuilder('customer')
-      .select('customer.id', 'id')
-      .addSelect('customer.name', 'name')
-      .addSelect('customer.email', 'email')
-      .addSelect('customer.birth_date', 'birthDate')
-      .addSelect('customer.document', 'document')
-      .addSelect('customer.cellphone', 'cellphone')
-      .addSelect('customer.gender', 'gender')
-      .addSelect('customer.column', 'column')
-      .addSelect('customer.order', 'order')
-      .addSelect('customer.description', 'description')
-      .addSelect('customer.priority', 'priority')
-      .addSelect('customer.city', 'city')
-      .addSelect('customer.house_number', 'houseNumber')
-      .addSelect('customer.district', 'district')
-      .addSelect('customer.street', 'street')
-      .addSelect('customer.create_date', 'createdAt')
-      .addSelect('customer.update_date', 'updatedAt')
-      .take(filters.take)
-      .skip(filters.skip);
+    const conditions: FindManyOptions<Customers> = {
+      take: filters.take,
+      skip: filters.skip,
+      order: { order: 'ASC' },
+      relations: ['comments'],
+    };
 
     filters.status
-      ? query.andWhere(`customer.status = :status`, { status: filters.status })
-      : query.andWhere(`customer.status = :status`, { status: true });
+      ? (conditions.where = { status: filters.status })
+      : (conditions.where = { status: true });
 
-    if (filters.name)
-      query.andWhere(`customer.name ILIKE :name`, {
-        name: `%${filters.name}%`,
-      });
+    if (filters.name) {
+      conditions.where = {
+        name: ILike(`%${filters.name}%`),
+      };
+    }
 
-    if (filters.column)
-      query.andWhere(`customer.column = :column`, { column: filters.column });
+    if (filters.column) {
+      conditions.where = { column: filters.column };
+    }
 
-    query = query.orderBy('customer.order', 'ASC');
-
-    const [data, count] = await Promise.all([
-      query.clone().getRawMany(),
-      query.clone().getCount(),
-    ]);
+    const [data, count] = await this.repository.findAndCount({
+      ...conditions,
+    });
 
     return {
       data,
