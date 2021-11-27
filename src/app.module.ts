@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CardsModule } from './modules/cards/cards.module';
+import { CommentsModule } from './modules/comments/comments.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import * as ormconfig from './ormconfig';
 @Module({
@@ -8,8 +8,8 @@ import * as ormconfig from './ormconfig';
     TypeOrmModule.forRootAsync({
       useFactory: async () => ormconfig,
     }),
-    CardsModule,
     CustomersModule,
+    CommentsModule,
   ],
   controllers: [],
   providers: [],
